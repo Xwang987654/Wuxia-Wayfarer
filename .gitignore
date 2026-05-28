@@ -1,0 +1,20 @@
+# IDE
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude Code local
+.claude/settings.local.json
+
+# Godot (when we start)
+.godot/
+*.import
+export.cfg
+export_presets.cfg
+
+# Build
+build/
+dist/

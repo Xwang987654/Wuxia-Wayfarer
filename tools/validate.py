@@ -27,9 +27,12 @@ VALID_OBJECTIVE_TYPES = {"collect", "talk"}
 VALID_DIALOGUE_EFFECTS = {"quest_start"}
 
 # 每种 type 的必需顶层字段（不含 id/name/type，它们在 COMMON_REQUIRED 中）
+# 与 data/docs/04-tech/data-contract.md 保持同步
 TYPE_REQUIRED_FIELDS: dict[str, list[tuple[str, str]]] = {
     # (field_name, expected_type_or_None)
     "map": [
+        ("map_type", "str"),
+        ("description", "str"),
         ("locations", "list"),
         ("connections", "list"),
         ("spawn_points", "list"),
@@ -37,6 +40,7 @@ TYPE_REQUIRED_FIELDS: dict[str, list[tuple[str, str]]] = {
     "npc": [
         ("role", "str"),
         ("location_id", "str"),
+        ("description", "str"),
         ("dialogue_ids", "list"),
         ("quest_ids", "list"),
     ],
@@ -47,8 +51,11 @@ TYPE_REQUIRED_FIELDS: dict[str, list[tuple[str, str]]] = {
     "quest": [
         ("title", "str"),
         ("giver_id", "str"),
+        ("status_default", "str"),
+        ("description", "str"),
         ("steps", "list"),
         ("rewards", "dict"),
+        ("completion_text", "str"),
     ],
     "item": [
         ("category", "str"),
@@ -62,6 +69,7 @@ TYPE_REQUIRED_FIELDS: dict[str, list[tuple[str, str]]] = {
         ("currency", "dict"),
         ("inventory", "list"),
         ("quest_states", "dict"),
+        ("flags", "dict"),
     ],
     "rule": [
         ("rule_type", "str"),
@@ -72,18 +80,6 @@ TYPE_REQUIRED_FIELDS: dict[str, list[tuple[str, str]]] = {
 }
 
 COMMON_REQUIRED = [("id", "str"), ("name", "str"), ("type", "str")]
-
-# 需要检查引用完整性的字段 -> 引用目标的类型目录
-REFERENCE_FIELDS = {
-    "location_id": "maps",       # 出现在 npc, player_state, quest.step, map.spawn_point
-    "speaker_id": "npcs",        # 出现在 dialogue, dialogue.node
-    "giver_id": "npcs",          # 出现在 quest
-    "target_id": None,           # 可以是 npc 或 item，运行时确定
-    "item_id": "items",          # 出现在 rewards, inventory, prices
-    "quest_id": "quests",        # 出现在 npc
-    "next_node_id": None,        # 对话节点内部引用，特殊处理
-    "quest_start": "quests",     # dialogue effect
-}
 
 
 # ---------------------------------------------------------------------------
@@ -168,27 +164,6 @@ def extract_all_ids(runtime_dir: Path, errors: Errors) -> dict[str, str]:
     return ids
 
 
-def collect_refs_in_value(value, ref_field_name: str) -> list[tuple[str, str]]:
-    """从值中提取引用，返回 [(ref_id, context), ...]。"""
-    refs = []
-    if isinstance(value, str) and value:
-        refs.append((value, ref_field_name))
-    elif isinstance(value, list):
-        for i, item in enumerate(value):
-            if isinstance(item, str):
-                refs.append((item, f"{ref_field_name}[{i}]"))
-            elif isinstance(item, dict):
-                # list of dicts, e.g. rewards.items[].item_id
-                for k, v in item.items():
-                    if k.endswith("_id") or k in REFERENCE_FIELDS:
-                        refs.extend(collect_refs_in_value(v, f"{ref_field_name}[{i}].{k}"))
-    elif isinstance(value, dict):
-        for k, v in value.items():
-            if k.endswith("_id") or k in REFERENCE_FIELDS:
-                refs.extend(collect_refs_in_value(v, f"{ref_field_name}.{k}"))
-    return refs
-
-
 # ---------------------------------------------------------------------------
 # 各 type 的详细校验
 # ---------------------------------------------------------------------------
@@ -200,7 +175,7 @@ def validate_locations(locations: list, label: str, all_ids: dict, errors: Error
         if not isinstance(loc, dict):
             errors.add(loc_label, "应为 object")
             continue
-        for field in ("id", "name", "description"):
+        for field in ("id", "name", "kind", "description"):
             v = loc.get(field)
             if not v or not isinstance(v, str):
                 errors.add(loc_label, f"缺少或为空的字段 {field}")
@@ -212,17 +187,25 @@ def validate_locations(locations: list, label: str, all_ids: dict, errors: Error
 
 
 def validate_connections(connections: list, loc_ids: set, label: str, errors: Errors):
+    edge_set: set[tuple[str, str]] = set()
     for i, conn in enumerate(connections):
         conn_label = f"{label}.connections[{i}]"
         if not isinstance(conn, dict):
             errors.add(conn_label, "应为 object")
             continue
-        for direction in ("from", "to"):
-            v = conn.get(direction)
-            if not v or not isinstance(v, str):
+        from_id = conn.get("from")
+        to_id = conn.get("to")
+        for direction, val in (("from", from_id), ("to", to_id)):
+            if not val or not isinstance(val, str):
                 errors.add(conn_label, f"缺少或为空的字段 {direction}")
-            elif v not in loc_ids:
-                errors.add(conn_label, f"{direction} 引用了不存在的 location id: {v}")
+            elif val not in loc_ids:
+                errors.add(conn_label, f"{direction} 引用了不存在的 location id: {val}")
+        if from_id and to_id and isinstance(from_id, str) and isinstance(to_id, str):
+            edge_set.add((from_id, to_id))
+    # 检查是否有单向连接（有 A→B 但没有 B→A）
+    for from_id, to_id in edge_set:
+        if (to_id, from_id) not in edge_set:
+            errors.add(label, f"单向连接: {from_id} → {to_id}，缺少反向 {to_id} → {from_id}")
 
 
 def validate_spawn_points(spawns: list, loc_ids: set, label: str, errors: Errors):
@@ -317,7 +300,7 @@ def validate_quest_steps(steps: list, label: str, all_ids: dict, errors: Errors)
         if not isinstance(step, dict):
             errors.add(step_label, "应为 object")
             continue
-        for field in ("id", "objective_type", "target_id", "required_count", "description"):
+        for field in ("id", "objective_type", "target_id", "location_id", "required_count", "description"):
             if field not in step:
                 errors.add(step_label, f"缺少必需字段 {field}")
 
@@ -329,6 +312,10 @@ def validate_quest_steps(steps: list, label: str, all_ids: dict, errors: Errors)
         if target_id and isinstance(target_id, str) and target_id not in all_ids:
             errors.add(step_label, f"target_id 引用了不存在的 id: {target_id}")
 
+        step_loc_id = step.get("location_id")
+        if step_loc_id and isinstance(step_loc_id, str) and step_loc_id not in all_ids:
+            errors.add(step_label, f"location_id 引用了不存在的地点: {step_loc_id}")
+
         count = step.get("required_count")
         if count is not None and (not isinstance(count, int) or count < 1):
             errors.add(step_label, f"required_count 应为正整数，实际为 {count}")
@@ -338,6 +325,15 @@ def validate_rewards(rewards: dict, label: str, all_ids: dict, errors: Errors):
     if not isinstance(rewards, dict):
         errors.add(label, "rewards 应为 object")
         return
+    # 检查 currency
+    currency = rewards.get("currency")
+    if not isinstance(currency, dict):
+        errors.add(f"{label}.rewards", "currency 应为 object")
+    elif "copper" not in currency:
+        errors.add(f"{label}.rewards.currency", "缺少 copper 字段")
+    elif not isinstance(currency["copper"], int) or isinstance(currency["copper"], bool):
+        errors.add(f"{label}.rewards.currency", "copper 应为 int")
+    # 检查 items
     items = rewards.get("items", [])
     if not isinstance(items, list):
         errors.add(f"{label}.rewards", "items 应为 list")
@@ -352,6 +348,11 @@ def validate_rewards(rewards: dict, label: str, all_ids: dict, errors: Errors):
             errors.add(item_label, "缺少或为空的字段 item_id")
         elif item_id not in all_ids:
             errors.add(item_label, f"item_id 引用了不存在的物品: {item_id}")
+        count = item.get("count")
+        if count is None:
+            errors.add(item_label, "缺少必需字段 count")
+        elif not isinstance(count, int) or isinstance(count, bool) or count < 1:
+            errors.add(item_label, f"count 应为正整数，实际为 {count}")
 
 
 def validate_prices(prices: list, label: str, all_ids: dict, errors: Errors):
@@ -465,6 +466,11 @@ def validate_file(json_file: Path, all_ids: dict, errors: Errors):
         rewards = data.get("rewards")
         if rewards:
             validate_rewards(rewards, label, all_ids, errors)
+
+    elif obj_type == "player_state":
+        loc_id = data.get("location_id")
+        if loc_id and isinstance(loc_id, str) and loc_id not in all_ids:
+            errors.add(label, f"location_id 引用了不存在的地点: {loc_id}")
 
     elif obj_type == "rule":
         rule_type = data.get("rule_type")

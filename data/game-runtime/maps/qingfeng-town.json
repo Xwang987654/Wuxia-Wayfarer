@@ -38,9 +38,13 @@
   ],
   "connections": [
     { "from": "loc_town_gate", "to": "loc_main_street" },
+    { "from": "loc_main_street", "to": "loc_town_gate" },
     { "from": "loc_main_street", "to": "loc_herb_shop" },
+    { "from": "loc_herb_shop", "to": "loc_main_street" },
     { "from": "loc_main_street", "to": "loc_inn" },
-    { "from": "loc_main_street", "to": "loc_creek_grass_slope" }
+    { "from": "loc_inn", "to": "loc_main_street" },
+    { "from": "loc_main_street", "to": "loc_creek_grass_slope" },
+    { "from": "loc_creek_grass_slope", "to": "loc_main_street" }
   ],
   "spawn_points": [
     {

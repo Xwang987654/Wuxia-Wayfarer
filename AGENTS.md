@@ -25,6 +25,7 @@ This file provides guidance to Codex when working in this repository.
 4. 验收以 `data/docs/05-production/demo-acceptance.md` 为准。
 5. 新内容默认写入 `data/game-runtime/`，一对象一文件，用稳定 `id` 互相引用。
 6. 不通过旧 OpenSpec 变更稿定义当前项目范围。
+7. 修改 `data/game-runtime/` 后，必须运行 `python3 tools/validate.py` 校验通过后再提交。
 
 ## Current Demo
 

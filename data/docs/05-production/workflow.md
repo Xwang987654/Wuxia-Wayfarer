@@ -20,5 +20,6 @@
 
 1. 先写或更新 docs 规则。
 2. 再写 runtime JSON。
-3. 最后实现 Godot 读取和交互。
+3. 运行 `python3 tools/validate.py` 校验通过。
+4. 最后实现 Godot 读取和交互。
 

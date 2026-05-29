@@ -1,0 +1,10 @@
+{
+  "id": "item_bun",
+  "name": "馒头",
+  "type": "item",
+  "category": "food",
+  "stackable": true,
+  "base_price": 2,
+  "description": "清风客栈卖的白面馒头，顶饱。"
+}
+

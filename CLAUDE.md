@@ -1,106 +1,47 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code when working in this repository.
 
 ## Project Overview
 
-武侠·自由人生 — 一款养生向武侠模拟经营游戏。2.5D斜俯视像素风，强调自由度、NPC互动与多路线人生体验。
+「武侠·自由人生」当前重构为一个低武侠、养生向的小镇生活 demo。目标是先做出清风镇最小可玩闭环，而不是维护完整大世界设计。
 
-**当前状态**：文档驱动开发阶段，尚无代码。
+## Single Source Of Truth
 
-## 开发方式
+`data/` 是项目唯一事实源。
 
-本项目采用**文档驱动开发**。设计文档在 `docs/`，游戏内容在 `game-data/`。实现任何功能前，先阅读对应的设计文档和内容设定。
+- `data/docs/`：项目目标、设计规范、系统规则、技术契约和验收标准。
+- `data/game-runtime/`：Godot 运行时需要读取或打包的世界观文本、JSON 数据和素材清单。
 
-## 文档体系
+旧的 `docs/`、`game-data/` 和 OpenSpec 变更稿不再作为当前规范使用。新增或修改内容前，先阅读 `data/docs/index.md`。
 
-### docs/ — 开发/设计文档
+`.claude/skills/` 中的旧内容写作 skill 本轮暂不迁移。迁移前，如 skill 内容与 `data/` 冲突，一律以 `data/` 为准。
 
-```
-docs/
-├── vision.md              # 愿景与目标
-├── game-design.md         # 游戏设计总纲（GDD）
-├── art-bible.md           # 美术圣经
-├── technical-design.md    # 技术架构设计
-├── data-model.md          # 数据模型（存档结构/模板定义）
-│
-├── systems/               # 系统设计文档
-│   ├── time-system.md
-│   ├── combat-system.md
-│   ├── economy-system.md
-│   ├── npc-system.md
-│   ├── quest-system.md
-│   └── reputation-system.md
-│
-└── milestones/
-    └── mvp.md
-```
+## Current Demo
 
-### game-data/ — 游戏内容（世界观/角色/物品/事件）
+第一版 demo 只做：
 
-```
-game-data/
-├── lore/                  # 世界观设定
-│   ├── world-background.md
-│   ├── martial-arts.md
-│   ├── factions.md
-│   └── qingfeng-town.md
-├── world-map.md           # 地图设定
-├── characters.md          # 角色/NPC设定
-├── items.md               # 物品/道具
-├── skills.md              # 武功/技能
-├── events.md              # 事件/剧情
-│
-├── npcs/                  # NPC 数据（JSON，Godot 加载）
-├── dialogues/             # 对话数据（JSON）
-├── quests/                # 任务数据（JSON）
-└── event-scripts/         # 事件脚本（JSON）
-```
+- 清风镇单地图。
+- 3 个 NPC。
+- 1 个采草药任务。
+- 3 个基础物品。
+- 最小时段推进。
+- 背包和铜钱反馈。
 
-### 文档依赖关系
+明确不做：门派、战斗、声望、复杂经营、隐藏武功、大地图旅行、深度季节天气、多结局。
 
-```
-vision.md ──▶ game-design.md ──▶ systems/*.md
-                   │                   │
-                   ├──▶ art-bible.md   ├──▶ game-data/*.md
-                   │         │         │
-                   │         └─────────┴──▶ data-model.md
-                   │                           │
-                   └──▶ technical-design.md     │
-                           │                   │
-                           └───── milestones/mvp.md
-```
+## Data Rules
 
-- `docs/`：设计文档（怎么做、为什么做）
-- `game-data/`：游戏内容（做什么、有什么）
-- `data-model.md`：连接两者的桥梁，定义数据结构
-
-## 数据模型关键决策
-
-- **模板与实例分离**：物品/NPC/武功的定义（静态模板）与运行时状态（动态实例）分开存储
-- **扁平结构**：不使用 ECS，直接访问 `player.hp`、`world.season`
-- **背包**：格子展示，无容量限制
-- **全局标记**：使用灵活的 `flags: Record<string, any>`
-- **存档格式**：JSON 文件，支持版本号和数据迁移
-
-## Core Design Decisions
-
-- **画风**：像素风 2.5D 等距视角，AI（Gemini/GPT）生成美术素材
-- **战斗**：回合+自动混合，MVP阶段仅文字结果输出
-- **时间**：1天=10分钟，日夜5时段，四季每6天切换，随机天气
-- **经营**：低买高卖 + 简化开店 + 轻量制造
-- **路线**：散人/门派/衙门/商人，可自由选择和切换
-- **范围**：先做清风镇（MVP），后续扩展
-
-## OpenSpec Workflow
-
-本项目使用 OpenSpec 管理变更流程。当前变更：`wuxia-life-game`。
-
-常用命令：
-- `/opsx:propose` — 创建新变更提案
-- `/opsx:apply` — 实施变更任务
-- `/opsx:explore` — 探索模式
+- 运行时 JSON 遵守 `data/docs/04-tech/data-contract.md`。
+- demo 范围以 `data/docs/00-project/demo-scope.md` 为准。
+- 验收以 `data/docs/05-production/demo-acceptance.md` 为准。
+- 所有运行时 JSON 一对象一文件，用稳定 `id` 互相引用。
+- 不通过旧 OpenSpec 变更稿定义当前项目范围。
 
 ## Tech Stack
 
-待定。候选：Web (Phaser.js/PixiJS)、Godot。详见 `docs/technical-design.md`。
+Godot 4.x + GDScript + JSON 数据驱动。
+
+## 文件同步
+
+本文件与 `AGENTS.md` 内容保持一致。修改本文件时，必须同步更新 `AGENTS.md` 的对应部分；反之亦然。两者的 Project Overview、Single Source Of Truth、Current Demo、Data Rules、Tech Stack 段落应始终相同。

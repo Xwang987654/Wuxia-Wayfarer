@@ -1,0 +1,33 @@
+{
+  "id": "asset_manifest_demo",
+  "name": "Demo 素材清单",
+  "type": "asset_manifest",
+  "assets": [
+    {
+      "id": "asset_player_placeholder",
+      "kind": "character_sprite",
+      "description": "玩家占位角色，等距像素风，站立和行走。"
+    },
+    {
+      "id": "asset_npc_herbalist_lin",
+      "kind": "character_sprite",
+      "description": "药师林角色，占位或正式素材。"
+    },
+    {
+      "id": "asset_npc_innkeeper_zhou",
+      "kind": "character_sprite",
+      "description": "周掌柜角色，占位或正式素材。"
+    },
+    {
+      "id": "asset_npc_guard_zhao",
+      "kind": "character_sprite",
+      "description": "赵守卫角色，占位或正式素材。"
+    },
+    {
+      "id": "asset_qingfeng_town_tiles",
+      "kind": "tileset",
+      "description": "清风镇青石街、木屋、药铺、客栈、溪边草坡等基础 tile。"
+    }
+  ]
+}
+

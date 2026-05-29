@@ -1,0 +1,17 @@
+{
+  "id": "player_initial_state",
+  "name": "玩家初始状态",
+  "type": "player_state",
+  "location_id": "loc_town_gate",
+  "time": {
+    "day": 1,
+    "time_of_day": "morning"
+  },
+  "currency": {
+    "copper": 10
+  },
+  "inventory": [],
+  "quest_states": {},
+  "flags": {}
+}
+

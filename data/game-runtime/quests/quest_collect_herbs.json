@@ -1,0 +1,40 @@
+{
+  "id": "quest_collect_herbs",
+  "name": "采回草药",
+  "type": "quest",
+  "title": "帮药师林采草药",
+  "giver_id": "npc_herbalist_lin",
+  "status_default": "available",
+  "description": "药师林需要三份常见草药，溪边草坡可以采到。",
+  "steps": [
+    {
+      "id": "step_collect_herbs",
+      "objective_type": "collect",
+      "target_id": "item_herb",
+      "location_id": "loc_creek_grass_slope",
+      "required_count": 3,
+      "description": "在溪边草坡采集 3 份草药。"
+    },
+    {
+      "id": "step_return_to_lin",
+      "objective_type": "talk",
+      "target_id": "npc_herbalist_lin",
+      "location_id": "loc_herb_shop",
+      "required_count": 1,
+      "description": "把草药交给药师林。"
+    }
+  ],
+  "rewards": {
+    "currency": {
+      "copper": 20
+    },
+    "items": [
+      {
+        "item_id": "item_bun",
+        "count": 1
+      }
+    ]
+  },
+  "completion_text": "药师林把草药收进柜台下的小筐，又递来一只纸包。里面有二十文钱和一个还热着的馒头。"
+}
+

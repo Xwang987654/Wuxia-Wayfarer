@@ -1,0 +1,35 @@
+{
+  "id": "dlg_guard_town",
+  "name": "赵守卫镇口",
+  "type": "dialogue",
+  "speaker_id": "npc_guard_zhao",
+  "nodes": [
+    {
+      "id": "start",
+      "speaker_id": "npc_guard_zhao",
+      "text": "进镇走青石街。药铺在左，客栈在前头。别在街上闹事。",
+      "choices": [
+        {
+          "text": "镇外哪里能采药？",
+          "next_node_id": "herbs"
+        },
+        {
+          "text": "知道了。",
+          "next_node_id": null
+        }
+      ]
+    },
+    {
+      "id": "herbs",
+      "speaker_id": "npc_guard_zhao",
+      "text": "溪边草坡能找着些常见药草。别走太远，天黑路不好认。",
+      "choices": [
+        {
+          "text": "多谢。",
+          "next_node_id": null
+        }
+      ]
+    }
+  ]
+}
+

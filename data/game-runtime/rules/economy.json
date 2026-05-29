@@ -1,0 +1,23 @@
+{
+  "id": "rule_economy",
+  "name": "经济规则",
+  "type": "rule",
+  "rule_type": "economy",
+  "currency": {
+    "id": "copper",
+    "name": "文"
+  },
+  "prices": [
+    {
+      "item_id": "item_bun",
+      "buy_price": 2,
+      "sell_price": 1
+    },
+    {
+      "item_id": "item_herb",
+      "buy_price": 3,
+      "sell_price": 1
+    }
+  ]
+}
+

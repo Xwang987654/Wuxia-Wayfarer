@@ -1,0 +1,11 @@
+{
+  "id": "npc_innkeeper_zhou",
+  "name": "周掌柜",
+  "type": "npc",
+  "role": "innkeeper",
+  "location_id": "loc_inn",
+  "description": "清风客栈掌柜，算盘打得快，见人先看鞋上的泥。",
+  "dialogue_ids": ["dlg_innkeeper_daily"],
+  "quest_ids": []
+}
+

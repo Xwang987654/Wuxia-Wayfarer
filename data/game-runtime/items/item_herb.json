@@ -1,0 +1,10 @@
+{
+  "id": "item_herb",
+  "name": "草药",
+  "type": "item",
+  "category": "quest_item",
+  "stackable": true,
+  "base_price": 3,
+  "description": "溪边常见的药草，晒干后能入药。"
+}
+

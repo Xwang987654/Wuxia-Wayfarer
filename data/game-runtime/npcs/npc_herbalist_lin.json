@@ -1,0 +1,11 @@
+{
+  "id": "npc_herbalist_lin",
+  "name": "药师林",
+  "type": "npc",
+  "role": "herbalist",
+  "location_id": "loc_herb_shop",
+  "description": "林家药铺的药师，说话慢，做事细，最怕药材断档。",
+  "dialogue_ids": ["dlg_herbalist_intro"],
+  "quest_ids": ["quest_collect_herbs"]
+}
+

@@ -1,0 +1,24 @@
+{
+  "id": "rule_time",
+  "name": "时间规则",
+  "type": "rule",
+  "rule_type": "time",
+  "time_periods": [
+    { "id": "morning", "name": "清晨" },
+    { "id": "noon", "name": "午间" },
+    { "id": "evening", "name": "傍晚" },
+    { "id": "night", "name": "夜晚" }
+  ],
+  "advance_actions": [
+    {
+      "action": "collect",
+      "location_id": "loc_creek_grass_slope",
+      "advance_periods": 1
+    }
+  ],
+  "default_time": {
+    "day": 1,
+    "time_of_day": "morning"
+  }
+}
+

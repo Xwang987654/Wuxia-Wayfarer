@@ -1,0 +1,53 @@
+{
+  "id": "map_qingfeng_town",
+  "name": "清风镇",
+  "type": "map",
+  "map_type": "town",
+  "description": "江南与中原交界的小镇，青石街贯穿南北。",
+  "locations": [
+    {
+      "id": "loc_town_gate",
+      "name": "镇口",
+      "kind": "road",
+      "description": "一块旧木牌立在路边，写着清风镇三个字。赵守卫站在牌子旁边。"
+    },
+    {
+      "id": "loc_main_street",
+      "name": "青石街",
+      "kind": "street",
+      "description": "青石铺成的主街，两侧是药铺、客栈和几间民居。"
+    },
+    {
+      "id": "loc_herb_shop",
+      "name": "林家药铺",
+      "kind": "shop",
+      "description": "柜台后排着药屉，门边晒着几簸箕切好的药材。"
+    },
+    {
+      "id": "loc_inn",
+      "name": "清风客栈",
+      "kind": "inn",
+      "description": "门口挂着褪色酒旗，屋里有几张擦得发亮的木桌。"
+    },
+    {
+      "id": "loc_creek_grass_slope",
+      "name": "溪边草坡",
+      "kind": "wilderness",
+      "description": "浅溪从草坡旁流过，石缝和草根间能找到常见药草。"
+    }
+  ],
+  "connections": [
+    { "from": "loc_town_gate", "to": "loc_main_street" },
+    { "from": "loc_main_street", "to": "loc_herb_shop" },
+    { "from": "loc_main_street", "to": "loc_inn" },
+    { "from": "loc_main_street", "to": "loc_creek_grass_slope" }
+  ],
+  "spawn_points": [
+    {
+      "id": "spawn_player_start",
+      "location_id": "loc_town_gate",
+      "description": "玩家初始进入点"
+    }
+  ]
+}
+

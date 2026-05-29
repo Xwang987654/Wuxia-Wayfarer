@@ -1,0 +1,35 @@
+{
+  "id": "dlg_innkeeper_daily",
+  "name": "周掌柜日常",
+  "type": "dialogue",
+  "speaker_id": "npc_innkeeper_zhou",
+  "nodes": [
+    {
+      "id": "start",
+      "speaker_id": "npc_innkeeper_zhou",
+      "text": "客官面生。先坐，水不要钱，馒头两文一个。",
+      "choices": [
+        {
+          "text": "最近镇上忙吗？",
+          "next_node_id": "town_news"
+        },
+        {
+          "text": "我只是路过。",
+          "next_node_id": null
+        }
+      ]
+    },
+    {
+      "id": "town_news",
+      "speaker_id": "npc_innkeeper_zhou",
+      "text": "忙倒不忙，就是过路人多了。鞋上带北边黄泥的，十个里有六个说货不好走。",
+      "choices": [
+        {
+          "text": "记下了。",
+          "next_node_id": null
+        }
+      ]
+    }
+  ]
+}
+

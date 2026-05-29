@@ -1,0 +1,11 @@
+{
+  "id": "npc_guard_zhao",
+  "name": "赵守卫",
+  "type": "npc",
+  "role": "guard",
+  "location_id": "loc_town_gate",
+  "description": "镇口守卫，话不多，熟人路过会点头。",
+  "dialogue_ids": ["dlg_guard_town"],
+  "quest_ids": []
+}
+

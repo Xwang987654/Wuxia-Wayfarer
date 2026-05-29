@@ -1,0 +1,45 @@
+{
+  "id": "dlg_herbalist_intro",
+  "name": "药师林初见",
+  "type": "dialogue",
+  "speaker_id": "npc_herbalist_lin",
+  "nodes": [
+    {
+      "id": "start",
+      "speaker_id": "npc_herbalist_lin",
+      "text": "来得正好。溪边常见的草药快用完了，你若顺路，帮我采三把回来。",
+      "choices": [
+        {
+          "text": "要哪一种？",
+          "next_node_id": "explain"
+        },
+        {
+          "text": "我这就去。",
+          "next_node_id": null,
+          "effects": {
+            "quest_start": "quest_collect_herbs"
+          }
+        },
+        {
+          "text": "我先看看别处。",
+          "next_node_id": null
+        }
+      ]
+    },
+    {
+      "id": "explain",
+      "speaker_id": "npc_herbalist_lin",
+      "text": "叶子细长，根边带一点苦味。溪边草坡就有。别拔太狠，留些根明年还能长。",
+      "choices": [
+        {
+          "text": "明白了。",
+          "next_node_id": null,
+          "effects": {
+            "quest_start": "quest_collect_herbs"
+          }
+        }
+      ]
+    }
+  ]
+}
+

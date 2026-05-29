@@ -1,0 +1,10 @@
+{
+  "id": "item_copper_coin",
+  "name": "铜钱",
+  "type": "item",
+  "category": "currency",
+  "stackable": true,
+  "base_price": 1,
+  "description": "清风镇日常买卖用的铜钱。"
+}
+
